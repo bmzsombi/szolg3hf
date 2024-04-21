@@ -1,5 +1,7 @@
 package cinema;
 
+import java.util.ArrayList;
+
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
 import jakarta.websocket.OnMessage;
@@ -9,15 +11,17 @@ import jakarta.websocket.server.ServerEndpoint;
 
 @ServerEndpoint("/cinema")
 public class CinemaEndpoint {
+	static Cinema cinema = new Cinema();
+	static ArrayList<Session> sessions = new ArrayList<>();
 
 	@OnOpen
 	public void open(Session session) {
-		System.out.println("WebSocket opened: " + session.getId());
+		sessions.add(session);
 	}
 	
 	@OnClose
 	public void close(Session session) {
-		System.out.println("WebSocket closed: " + session.getId());
+		sessions.remove(session);
 	}
 	
 	@OnError
@@ -27,8 +31,13 @@ public class CinemaEndpoint {
 	
 	@OnMessage
 	public String message(String msg) {
-		System.out.println("WebSocket message: " + msg);
-		return "Hello: "+msg;
+		if (msg.equals("4")) {
+			return "Hello: "+msg;
+		}
+		else {
+			return "ERROR";
+		}
+		//return "Hello: "+msg;
 	}
 	
 }

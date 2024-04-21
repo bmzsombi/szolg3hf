@@ -1,23 +1,23 @@
 package cinema;
 
 public class Seat {
-	int row, column;
+	RoomSize roomsize;
 	SeatStatus seatstatus;
 	
 	public int getRow() {
-		return this.row;
+		return this.roomsize.getRow();
 	}
 	
 	public int getColumn() {
-		return this.column;
+		return this.roomsize.getColumn();
 	}
 	
 	public void setRow(int row) {
-		this.row = row;
+		this.roomsize.setRow(row);
 	}
 	
 	public void setColumn(int column) {
-		this.column = column;
+		this.roomsize.setColumn(column);
 	}
 	
 	public SeatStatus getSeatStatus() {

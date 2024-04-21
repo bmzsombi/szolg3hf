@@ -19,11 +19,13 @@
         var selectedSeat = null;
         var canvas = null;
         var context = null; // Ezt a "context" nevű változót tilos átnevezni vagy lokálissá tenni.
+        var websocket = null;
 
         function init() {
             // TODO: az alábbi URL-ben a NEPTUN szót le kell cserélni a saját csupa nagybetűs Neptun-kódra,
             // és az így keletkező címre kell kapcsolódni a WebSocket-tel:
             wsUrl = getRootUri() + "/WebSocket_CAX1RR/cinema";
+        	websocket = new WebSocket(wsUrl);
             // A következő sorok a canvas-t inicializálják:
             canvas = document.getElementById('room');
             canvas.addEventListener('mousemove', function (evt) { mousePos = getMousePos(canvas, evt); });
@@ -33,10 +35,6 @@
         }
 
         // TODO: ide jöhetnek a WebSocket kezeléssel kapcsolatos függvények
-        function getRootUri() {
-			return "ws://" + (document.location.hostname == "" ? "localhost" : document.location.hostname)
-			+ ":" + (document.location.port == "" ? "8080" : document.location.port);
-		}
         
         function initWebSocket() {
         	websocket = new WebSocket(wsUrl);
@@ -62,45 +60,43 @@
         }
         
         function onOpen(evt) {
-        	writeToScreen("Connected to endpoint.");
+			console.log("open");
         }
         
         function onMessage(evt) {
-        	writeToScreen("Message received: " + evt.data);
+        	console.log("message " + evt.data);
         }
         
         function onError(evt) {
-        	writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+        	console.log("error" + evt.data);
         }
         
         function onClose(evt) {
-        	writeToScreen("Connection closed.");
+        	console.log("close");
         }
         
         function doSend() {
-        	message = textID.value;
+        	//websocket = new WebSocket(wsUrl);
+        	console.log("asdasd");
+        	message = rows.value;
         	websocket.send(message);
-        	writeToScreen("Message Sent: " + message);
+        }
+        
+        function initAction(){
+        	rowCount = rows.value;
+        	colCount = columns.value;
+			draw();
+			ws
         }
         
 		function send_message() {
 			if (websocket == null) {
-				init();
+				initWebSocket();
 			} else {
-				//doSend();
+				doSend();
 			}
 		}
-		
-		function writeToScreen(message) {
-			var pre = document.createElement("p");
-			pre.style.wordWrap = "break-word";
-			pre.innerHTML = message;
-			
-			output.appendChild(pre);
-		}
-		
-		window.addEventListener("load", init, false);
-        
+
         // Kirajzolja a canvas-t csupa szabad székekkel:
         function draw() {
             canvas.height = rowCount * seatSize;
@@ -169,7 +165,7 @@
         <label for="columns">column count:</label><input id="columns" name="columns" value="20" type="text" size="5"/>
         <!-- Az alábbi gombnak az előző két mezőben megadott értékekkel kell inicializálnia
             a mozitermet: -->
-        <input onclick="send_message()" id="initButton" value="Init" type="button"/><br />
+        <input onclick="initAction()" id="initButton" value="Init" type="button"/><br />
         <!-- Az alábbi gombnak le kell foglalnia az éppen aktuálisan zárolt széket: -->
         <input id="reserveButton" value="Reserve" type="button"/><br />
         <!-- Ez a canvas, ide lesznek kirajzolva a székek: -->
